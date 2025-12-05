@@ -186,6 +186,10 @@ add_interface_port tdd_if gpio_tx1_enable_in tx1_enable_in Input 1
 add_interface_port tdd_if gpio_tx2_enable_in tx2_enable_in Input 1
 add_interface_port tdd_if tdd_sync tdd_sync_in Input 1
 
+add_interface dac_ctrl_if conduit end
+add_interface_port dac_ctrl_if tx1_mute tx1_mute Input 1
+add_interface_port dac_ctrl_if tx2_mute tx2_mute Input 1
+
 # updates
 
 proc axi_adrv9001_elab {} {

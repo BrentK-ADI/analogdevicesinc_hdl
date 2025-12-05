@@ -114,6 +114,8 @@ module axi_adrv9001 #(
   output                  tx1_enable,
   output                  tx2_enable,
 
+  input                   tx1_mute,
+  input                   tx2_mute,
   input                   delay_clk,
 
   // user interface
@@ -530,6 +532,7 @@ module axi_adrv9001 #(
     .adc_clk_ratio (adc_clk_ratio),
 
     //DAC interface
+    .tx1_mute (tx1_mute),
     .tx1_clk (dac_1_clk),
     .tx1_rst (dac_1_rst_s),
     .tx1_if_rst (tx1_if_rst),
@@ -542,6 +545,7 @@ module axi_adrv9001 #(
     .tx1_symb_op (tx1_symb_op),
     .tx1_symb_8_16b (tx1_symb_8_16b),
 
+    .tx2_mute (tx2_mute),
     .tx2_clk (dac_2_clk),
     .tx2_rst (dac_2_rst_s),
     .tx2_if_rst (tx2_if_rst),

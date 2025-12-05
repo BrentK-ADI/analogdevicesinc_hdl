@@ -24,14 +24,19 @@ if {$ad_project_params(CMOS_LVDS_N) == 0} {
 }
 
 #FFH Signals
-create_bd_port -dir O -from 5 -to 0 ffh_tdd_out
+create_bd_port -dir O -from 9 -to 0 ffh_tdd_out
+create_bd_port -dir I tx1_mute
+create_bd_port -dir I tx2_mute
 ad_ip_instance axi_tdd ffh_axi_tdd
-ad_ip_parameter ffh_axi_tdd CONFIG.CHANNEL_COUNT 6
+ad_ip_parameter ffh_axi_tdd CONFIG.CHANNEL_COUNT 10
 ad_cpu_interconnect 0x40000000  ffh_axi_tdd
 ad_connect ffh_tdd_out ffh_axi_tdd/tdd_channel
 ad_connect sys_ps8/pl_resetn0 ffh_axi_tdd/resetn
-ad_connect sys_ps8/pl_clk0 ffh_axi_tdd/clk
+ad_connect axi_adrv9001/dac_1_clk ffh_axi_tdd/clk
 ad_connect GND ffh_axi_tdd/sync_in
+ad_connect tx1_mute axi_adrv9001/tx1_mute
+ad_connect tx2_mute axi_adrv9001/tx2_mute
+
 
 sysid_gen_sys_init_file $sys_cstring
 

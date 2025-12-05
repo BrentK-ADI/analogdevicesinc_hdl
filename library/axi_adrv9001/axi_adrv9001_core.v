@@ -88,6 +88,7 @@ module axi_adrv9001_core #(
   output                  rx2_symb_8_16b,
 
   // DAC interface
+  input                   tx1_mute,
   input                   tx1_clk,
   output                  tx1_rst,
   input                   tx1_if_rst,
@@ -100,6 +101,7 @@ module axi_adrv9001_core #(
   output                  tx1_symb_op,
   output                  tx1_symb_8_16b,
 
+  input                   tx2_mute,
   input                   tx2_clk,
   output                  tx2_rst,
   input                   tx2_if_rst,
@@ -286,6 +288,9 @@ module axi_adrv9001_core #(
   reg            dac_2_transfer_sync_d1 = 1'b0;
   reg            dac_2_transfer_sync_d2 = 1'b0;
 
+  reg            tx1_mute_d = 1'b0;
+  reg            tx2_mute_d = 1'b0;
+
   // workaround registers
   reg rx1_r1_mode_d;
   reg rx1_symb_op_d;
@@ -370,22 +375,37 @@ module axi_adrv9001_core #(
 
   always @(posedge tx1_clk) begin
     tx1_data_valid_A_d <= tx1_data_valid_A;
-    tx1_data_i_A_d <= tx1_data_i_A;
-    tx1_data_q_A_d <= tx1_data_q_A;
+    if (tx1_mute == 1) begin
+        tx1_data_i_A_d <= 16'b0;
+        tx1_data_q_A_d <= 16'b0;
+    end else begin
+        tx1_data_i_A_d <= tx1_data_i_A;
+        tx1_data_q_A_d <= tx1_data_q_A;
+    end
   end
 
   always @(posedge tx2_clk) begin
     tx2_data_valid_A_d <= tx2_data_valid_A;
-    tx2_data_i_A_d <= tx2_data_i_A;
-    tx2_data_q_A_d <= tx2_data_q_A;
+    if (tx2_mute == 1) begin
+        tx2_data_i_A_d <= 16'b0;
+        tx2_data_q_A_d <= 16'b0;
+    end else begin
+        tx2_data_i_A_d <= tx2_data_i_A;
+        tx2_data_q_A_d <= tx2_data_q_A;
+    end
   end
 
   // Use tx1_r1_mode as clock enable when the two clocks have different frequency
   always @(posedge tx2_clk) begin
     if (tx1_r1_mode==0) begin
       tx1_data_valid_B_d <= tx1_data_valid_B;
-      tx1_data_i_B_d <= tx1_data_i_B;
-      tx1_data_q_B_d <= tx1_data_q_B;
+      if (tx2_mute == 1) begin
+        tx1_data_i_B_d <= 16'b0;
+        tx1_data_q_B_d <= 16'b0;
+      end else begin
+        tx1_data_i_B_d <= tx1_data_i_B;
+        tx1_data_q_B_d <= tx1_data_q_B;
+      end
     end
   end
 

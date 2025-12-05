@@ -47,7 +47,6 @@ module system_top (
   output                  spi_dio,
   input                   spi_do,
   output                  spi_en,
-
   // Device clock
   input                   fpga_ref_clk_n,
   input                   fpga_ref_clk_p,
@@ -124,7 +123,11 @@ module system_top (
   input                   vadj_err,
   output                  platform_status,
 
-  inout                   tdd_sync
+  inout                   tdd_sync,
+  output                  pmod1_0_cs,
+  output                  pmod1_1_mosi,
+  input                   pmod1_2_miso,
+  output                  pmod1_3_clk
 );
 
   // internal registers
@@ -140,13 +143,16 @@ module system_top (
   wire                    gpio_tx1_enable_in;
   wire                    gpio_tx2_enable_in;
   wire        [ 2:0]      spi_csn;
-  wire        [5:0]       ffh_tdd_out;
+  wire        [2:0]       spi1_csn;
+  wire        [9:0]       ffh_tdd_out;
+  wire                    tx1_mute;
+  wire                    tx2_mute;
   wire fpga_ref_clk;
   wire fpga_mcs_in;
   wire tdd_sync_loc;
   wire tdd_sync_i;
   wire tdd_sync_cntr;
-
+   
   // instantiations
 
   IBUFDS i_ibufgs_fpga_ref_clk (
@@ -200,7 +206,8 @@ module system_top (
   assign dgpio_0_hop = ffh_tdd_out[0] | ffh_tdd_out[1];
   assign dgpio_1_tx_setup_1 = ffh_tdd_out[2] | ffh_tdd_out[3];
   assign dgpio_2_tx_setup_2 = ffh_tdd_out[4] | ffh_tdd_out[5];
-
+  assign tx1_mute = ffh_tdd_out[6] | ffh_tdd_out[7];
+  assign tx2_mute = ffh_tdd_out[8] | ffh_tdd_out[9];
   assign gpio_rx1_enable_in = gpio_o[48];
   assign gpio_rx2_enable_in = gpio_o[49];
   assign gpio_tx1_enable_in = dgpio_1_tx_setup_1;
@@ -216,7 +223,7 @@ module system_top (
   assign gpio_i[31:21] = gpio_o[31:21];
 
   assign spi_en = spi_csn[0];
-
+  assign pmod1_0_cs = spi1_csn[0];
   assign tdd_sync_loc = gpio_o[56];
 
   // tdd_sync_loc - local sync signal from a GPIO or other source
@@ -231,6 +238,8 @@ module system_top (
 
     .tx_output_enable (1'b1),
     .ffh_tdd_out(ffh_tdd_out),
+    .tx1_mute(tx1_mute),
+    .tx2_mute(tx2_mute),
     .rx1_dclk_in_n (rx1_dclk_in_n),
     .rx1_dclk_in_p (rx1_dclk_in_p),
     .rx1_idata_in_n (rx1_idata_in_n),
@@ -275,7 +284,6 @@ module system_top (
     .rx2_enable (rx2_enable),
     .tx1_enable (tx1_enable),
     .tx2_enable (tx2_enable),
-
     .gpio_rx1_enable_in (gpio_rx1_enable_in),
     .gpio_rx2_enable_in (gpio_rx2_enable_in),
     .gpio_tx1_enable_in (gpio_tx1_enable_in),
@@ -291,9 +299,9 @@ module system_top (
     .spi0_csn (spi_csn),
     .spi0_miso (spi_do),
     .spi0_mosi (spi_dio),
-    .spi1_sclk (),
-    .spi1_csn (),
-    .spi1_miso (1'b0),
-    .spi1_mosi ());
+    .spi1_sclk (pmod1_3_clk),
+    .spi1_csn (spi1_csn),
+    .spi1_miso (pmod1_2_miso),
+    .spi1_mosi (pmod1_1_mosi));
 
 endmodule

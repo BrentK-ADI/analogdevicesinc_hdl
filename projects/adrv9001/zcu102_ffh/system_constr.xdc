@@ -44,6 +44,11 @@ set_property  -dict {PACKAGE_PIN U9    IOSTANDARD LVCMOS18}  [get_ports tx2_enab
 set_property  -dict {PACKAGE_PIN V8    IOSTANDARD LVCMOS18}  [get_ports vadj_err]                          ; #FMC_HPC0_LA31_P      IO_L7P_T1L_N0_QBC_AD13P_67
 set_property  -dict {PACKAGE_PIN V7    IOSTANDARD LVCMOS18}  [get_ports platform_status]                   ; #FMC_HPC0_LA31_N      IO_L7N_T1L_N1_QBC_AD13N_67
 
+set_property  -dict {PACKAGE_PIN D20   IOSTANDARD LVCMOS33}  [get_ports pmod1_0_cs]                        ;
+set_property  -dict {PACKAGE_PIN E20   IOSTANDARD LVCMOS33}  [get_ports pmod1_1_mosi]                      ;
+set_property  -dict {PACKAGE_PIN D22   IOSTANDARD LVCMOS33}  [get_ports pmod1_2_miso]                      ;
+set_property  -dict {PACKAGE_PIN E22   IOSTANDARD LVCMOS33}  [get_ports pmod1_3_clk]                       ;
+
 set_property UNAVAILABLE_DURING_CALIBRATION TRUE [get_ports tx1_strobe_out_p]
 set_property UNAVAILABLE_DURING_CALIBRATION TRUE [get_ports tx2_idata_out_p]
 
